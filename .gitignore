@@ -1,0 +1,21 @@
+# Compiled programs
+basic_file_ops
+text_copy
+binary_records
+
+# Object files
+*.o
+
+# Files the programs generate
+out.txt
+copy_out.txt
+records.bin
+
+# Editor and OS junk
+*.swp
+*~
+
+# Secrets
+*.pem
+id_rsa*
+.env
