@@ -1,0 +1,109 @@
+CS 1380 Homework 26: File I/O and Beyond the Code
+Natalia Robertson
+
+==================== Part A ====================
+
+1. fopen returns NULL if it fails. Before I use the FILE pointer,
+   I check that it isnt NULL. If it is, I use perror to print the
+   error and return or exit instead of trying to use it.
+
+2. "r" opens an existing file for reading (like when I read out.txt).
+   "w" opens a file for writing and either creates it or erases
+   what was already in it (like when I write out.txt).
+   "rb" and "wb" are the binary versions, which I used for records.bin.
+
+3. Every successful fopen opens a file handle and uses buffered data.
+   fclose flushes the buffer and closes the file. If I forget to do
+   it before an early return, I could lose data or leave the file open.
+
+   In text_copy.c, if the output fopen fails, I still fclose the
+   input file before returning.
+
+
+==================== Part B ====================
+
+4. fgets is better when I want to read a whole line, including spaces.
+   fscanf with %s stops at whitespace, and if I dont give it a width
+   limit it could overflow the buffer. fgets also takes the buffer size,
+   so its safer.
+
+5. fwrite copies the actual bytes of the struct in memory, so it is
+   fixed size and not really readable by a person.
+
+   fprintf writes the fields as text, so someone can actually read it.
+
+
+==================== Part C ====================
+
+6. fopen returns NULL if it fails.
+   fgets returns NULL at the end of the file or if theres an error.
+   fputs returns EOF if it fails.
+
+   fread and fwrite return how many records were transferred, so I
+   compare that to how many I asked for (like in binary_records.c).
+
+   fclose returns nonzero if it fails.
+
+7. Yes, the README goes What, Why, then How to use it, with example
+   output and the build steps at the end.
+
+   I think that order makes sense because someone first wants to know
+   what the program does and see it work. The build steps only matter
+   once they actually want to try it.
+
+8. Useless comment:
+   /* open the file */ above fopen(path, "r"), because it just says
+   what the code already says.
+
+   Helpful comment:
+   The WHY comment in text_copy.c explaining that fclose on the output
+   file flushes buffered data, so thats the one that needs to be checked.
+
+9. A good bug report should include:
+   - the exact steps to recreate the problem
+   - what I expected to happen
+   - what actually happened, including the full error message
+   - my environment (OS, compiler and version, and the command I used
+     to build it)
+
+10. I should say that I used AI, what parts it helped with, and include
+    my prompts, its responses, and my critique in ai_usage_log.txt.
+
+    I shouldnt submit code or text I cant explain, because then its
+    not really my work and I wouldnt know how to fix it if something
+    broke.
+
+
+==================== Commit rewrite ====================
+
+Weak subject:
+fixed stuff
+
+Better (Problem -> Solution):
+
+Problem: Nothing explained why text_copy.c only checks fclose on the
+output file, so someone might think not checking the input file was
+a bug.
+
+Solution: Add a WHY comment explaining that buffered writes can fail
+when closing the file, but closing a read-only file doesnt lose data.
+
+My real commit for this was:
+c6ad5f4 Explain why only the output fclose is checked, since buffered writes can fail at close
+
+
+==================== git status ====================
+
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+
+
+==================== git log --oneline ====================
+
+c6ad5f4 (HEAD -> main, origin/main) Explain why only the output fclose is checked, since buffered writes can fail at close
+a8e4f51 Add README funnel so a new reader sees purpose and usage before build steps
+076dd1b Add binary struct read/write demo so records survive a round trip, with a short-read check
+667138c Add line-by-line text copy so records can be duplicated safely, with a missing-file error path
+0529132 Add write-then-read file demo so Part A has a checked fopen/fclose baseline
