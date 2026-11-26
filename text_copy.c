@@ -42,7 +42,9 @@ static int copy_lines(const char *in_path, const char *out_path, int *count)
         (*count)++;
     }
 
-    fclose(in);
+    /* WHY: fclose on the output file is what flushes buffered data to disk,
+     * so a failure there means the copy may be incomplete. We check it,
+     * but a failed fclose on the input file loses nothing, so we skip it. */    fclose(in);
 
     if (fclose(out) != 0) {
         perror("Error closing output file");
